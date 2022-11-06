@@ -5,13 +5,11 @@ from users.managers import UserManager
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext_lazy as _
 
-# from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-
 
 class UserRoles(models.TextChoices):
     # TODO закончите enum-класс для пользователя
-    admin = 'admin'
-    user = 'user'
+    ADMIN = 'admin'
+    USER = 'user'
 
 
 # TODO переопределение пользователя.
@@ -21,9 +19,9 @@ class User(AbstractBaseUser):
 
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
-    phone = models.CharField(max_length=12)
+    phone = PhoneNumberField()
     email = models.EmailField(max_length=100, unique=True)
-    role = models.CharField(max_length=5, choices=UserRoles.choices, default=UserRoles.user)
+    role = models.CharField(max_length=5, choices=UserRoles.choices, default=UserRoles.USER)
     image = models.ImageField(null=True)
     is_active = models.BooleanField(default=True)
 
@@ -34,11 +32,11 @@ class User(AbstractBaseUser):
 
     @property
     def is_admin(self):
-        return self.role == UserRoles.admin
+        return self.role == UserRoles.ADMIN
 
     @property
     def is_user(self):
-        return self.role == UserRoles.user
+        return self.role == UserRoles.USER
 
     @property
     def is_staff(self):
